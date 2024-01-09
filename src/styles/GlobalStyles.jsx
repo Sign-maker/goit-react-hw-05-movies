@@ -28,8 +28,8 @@ ul {
 }
 
 a {
-  color: currentColor;
-  text-decoration: none;
+  /* color: currentColor; */
+  /* text-decoration: none; */
   font-family: inherit;
 }
 

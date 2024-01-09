@@ -1,27 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 
-import { CastList } from 'components/CastList/CastList';
-import { Informer } from 'components/Informer/Informer.styled';
-import { Loader } from 'components/Loader/Loader';
+import { getTrending } from 'services-api/themoviedb-apt';
+import { MoviesList } from 'components/MoviesList/MoviesList';
+import { BtnLoadMore } from 'components/BtnLoadMore/BtnLoadMore';
 import { INFO_TYPES, STATUS } from 'configs/constants';
-import { getMovieCredits } from 'services-api/themoviedb-apt';
+import { Loader } from 'components/Loader/Loader';
+import { Informer } from 'components/Informer/Informer.styled';
 
-const Cast = () => {
+export const TrendingMovies = () => {
   const [items, setItems] = useState([]);
+  const [page, setPage] = useState(1);
   const [status, setStatus] = useState(STATUS.idle);
+  const [loadMore, setLoadMore] = useState(false);
   const [error, setError] = useState(null);
-  const { movieId } = useParams();
 
   useEffect(() => {
-    if (!movieId) return;
     const abortController = new AbortController();
     const signal = abortController.signal;
 
     async function getItems() {
       setStatus(STATUS.pending);
-      const { cast } = await getMovieCredits(movieId, signal);
-      setItems(cast);
+      const { results, total_pages } = await getTrending(page, signal);
+
+      setLoadMore(page < total_pages);
+      setItems(state => [...state, ...results]);
       setStatus(STATUS.resolved);
     }
 
@@ -35,29 +37,35 @@ const Cast = () => {
     return () => {
       abortController.abort();
     };
-  }, [movieId]);
+  }, [page]);
 
-  const showItems = status === STATUS.resolved && items.length > 0;
+  const handleLoadMore = () => {
+    setPage(prevPage => prevPage + 1);
+  };
+
+  const showItems =
+    (status === STATUS.resolved || loadMore) && items.length > 0;
   const showNoItemsWarning = status === STATUS.resolved && !items.length;
   const showLoader = status === STATUS.pending;
+  const showLoadMore = status === STATUS.resolved && loadMore;
   const showError = status === STATUS.rejected;
 
   return (
-    <>
-      {showItems && <CastList items={items} />}
+    <section>
+      <h2>Trending today</h2>
+      {showItems && <MoviesList items={items} />}
       {showNoItemsWarning && (
         <Informer
           $infotype={INFO_TYPES.notification}
-        >{`No items found!`}</Informer>
+        >{`No items found! Please, reload page`}</Informer>
       )}
       {showLoader && <Loader />}
+      {showLoadMore && <BtnLoadMore handleLoadMore={handleLoadMore} />}
       {showError && (
         <Informer
           $infotype={INFO_TYPES.error}
         >{`Oops, something went wrong! ${error.message}`}</Informer>
       )}
-    </>
+    </section>
   );
 };
-
-export default Cast;

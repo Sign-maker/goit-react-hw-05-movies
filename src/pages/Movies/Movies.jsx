@@ -1,34 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import { BtnLoadMore } from 'components/BtnLoadMore/BtnLoadMore';
-import { Informer } from 'components/Informer/Informer.styled';
-import { Loader } from 'components/Loader/Loader';
-import { ReviewList } from 'components/ReviewList/ReviewList';
 import { INFO_TYPES, STATUS } from 'configs/constants';
-import { getMovieReviews } from 'services-api/themoviedb-apt';
+import { Loader } from 'components/Loader/Loader';
+import { Informer } from 'components/Informer/Informer.styled';
+import { MoviesList } from 'components/MoviesList/MoviesList';
+import { SearchForm } from 'components/SearchForm/SearchForm';
+import { getMoviesByTitle } from 'services-api/themoviedb-apt';
 
-const Reviews = () => {
+const Movies = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [items, setItems] = useState([]);
-  const [status, setStatus] = useState(STATUS.idle);
   const [page, setPage] = useState(1);
+  const [status, setStatus] = useState(STATUS.idle);
   const [loadMore, setLoadMore] = useState(false);
   const [error, setError] = useState(null);
 
-  const { movieId } = useParams();
+  const query = useMemo(() => searchParams.get('query') ?? '', [searchParams]);
 
   useEffect(() => {
-    if (!movieId) return;
+    if (!query) return;
     const abortController = new AbortController();
     const signal = abortController.signal;
 
     async function getItems() {
       setStatus(STATUS.pending);
-      const { results, total_pages } = await getMovieReviews(
-        movieId,
+      const { results, total_pages } = await getMoviesByTitle(
+        query,
         page,
         signal
       );
+
       setLoadMore(page < total_pages);
       setItems(state => [...state, ...results]);
       setStatus(STATUS.resolved);
@@ -44,7 +47,18 @@ const Reviews = () => {
     return () => {
       abortController.abort();
     };
-  }, [movieId, page]);
+  }, [query, page]);
+
+  const updateQueryString = query => {
+    if (query === '') {
+      setSearchParams({});
+      return;
+    }
+
+    setItems([]);
+    setPage(1);
+    setSearchParams({ query });
+  };
 
   const handleLoadMore = () => {
     setPage(prevPage => prevPage + 1);
@@ -59,11 +73,12 @@ const Reviews = () => {
 
   return (
     <>
-      {showItems && <ReviewList items={items} />}
+      <SearchForm onSubmit={updateQueryString} value={query} />
+      {showItems && <MoviesList items={items} />}
       {showNoItemsWarning && (
         <Informer
           $infotype={INFO_TYPES.notification}
-        >{`No items found!`}</Informer>
+        >{`No items found! Please, try another query!`}</Informer>
       )}
       {showLoader && <Loader />}
       {showLoadMore && <BtnLoadMore handleLoadMore={handleLoadMore} />}
@@ -76,4 +91,4 @@ const Reviews = () => {
   );
 };
 
-export default Reviews;
+export default Movies;
