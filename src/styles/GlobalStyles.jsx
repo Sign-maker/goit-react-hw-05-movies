@@ -28,9 +28,15 @@ ul {
 }
 
 a {
-  /* color: currentColor; */
-  /* text-decoration: none; */
+  color: currentColor;
+  text-decoration: none;
   font-family: inherit;
+}
+input {
+  /* color: currentColor; */
+  font-family: inherit;
+  font-size: inherit;
+  
 }
 
 button {
@@ -47,7 +53,7 @@ img {
   height: auto;
 }
 svg {
-  display: block;
+  display: inline-block;
 }
 
 body {
@@ -57,7 +63,11 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-size: ${props => props.theme.spacing(5)} ;
+  font-size: ${props => props.theme.spacing(4.5)} ;
+  line-height: 1.4;
+  background-color: ${props => props.theme.bcColor1};
+  color: ${props => props.theme.fntColor};
+
 }
 
 code {
@@ -65,4 +75,17 @@ code {
     monospace;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+
+  white-space: nowrap;
+  clip-path: inset(100%);
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+}
  `;

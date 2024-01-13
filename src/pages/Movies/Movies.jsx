@@ -1,13 +1,14 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { BtnLoadMore } from 'components/BtnLoadMore/BtnLoadMore';
 import { INFO_TYPES, STATUS } from 'configs/constants';
+import { getMoviesByTitle } from 'services-api/themoviedb-apt';
+import { BtnLoadMore } from 'components/BtnLoadMore/BtnLoadMore';
 import { Loader } from 'components/Loader/Loader';
-import { Informer } from 'components/Informer/Informer.styled';
 import { MoviesList } from 'components/MoviesList/MoviesList';
 import { SearchForm } from 'components/SearchForm/SearchForm';
-import { getMoviesByTitle } from 'services-api/themoviedb-apt';
+import { Informer } from 'components/Informer/Informer.styled';
+import { H2, Section } from './Movies.styled';
 
 const Movies = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -17,7 +18,7 @@ const Movies = () => {
   const [loadMore, setLoadMore] = useState(false);
   const [error, setError] = useState(null);
 
-  const query = useMemo(() => searchParams.get('query') ?? '', [searchParams]);
+  const query = searchParams.get('query') ?? '';
 
   useEffect(() => {
     if (!query) return;
@@ -49,15 +50,19 @@ const Movies = () => {
     };
   }, [query, page]);
 
-  const updateQueryString = query => {
-    if (query === '') {
+  const updateQueryString = searchQuery => {
+    if (searchQuery === query) return;
+
+    if (searchQuery === '') {
       setSearchParams({});
+      setStatus(STATUS.idle);
+      setItems([]);
       return;
     }
 
     setItems([]);
     setPage(1);
-    setSearchParams({ query });
+    setSearchParams({ query: searchQuery });
   };
 
   const handleLoadMore = () => {
@@ -72,7 +77,8 @@ const Movies = () => {
   const showError = status === STATUS.rejected;
 
   return (
-    <>
+    <Section>
+      <H2 className="visually-hidden">Movies</H2>
       <SearchForm onSubmit={updateQueryString} value={query} />
       {showItems && <MoviesList items={items} />}
       {showNoItemsWarning && (
@@ -87,7 +93,7 @@ const Movies = () => {
           $infotype={INFO_TYPES.error}
         >{`Oops, something went wrong! ${error.message}`}</Informer>
       )}
-    </>
+    </Section>
   );
 };
 

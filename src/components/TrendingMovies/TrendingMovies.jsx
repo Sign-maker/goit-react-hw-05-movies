@@ -6,6 +6,7 @@ import { BtnLoadMore } from 'components/BtnLoadMore/BtnLoadMore';
 import { INFO_TYPES, STATUS } from 'configs/constants';
 import { Loader } from 'components/Loader/Loader';
 import { Informer } from 'components/Informer/Informer.styled';
+import { H2, Section } from './TrandingMovies.styled';
 
 export const TrendingMovies = () => {
   const [items, setItems] = useState([]);
@@ -51,13 +52,13 @@ export const TrendingMovies = () => {
   const showError = status === STATUS.rejected;
 
   return (
-    <section>
-      <h2>Trending today</h2>
+    <Section>
+      <H2>Trending today</H2>
       {showItems && <MoviesList items={items} />}
       {showNoItemsWarning && (
         <Informer
           $infotype={INFO_TYPES.notification}
-        >{`No items found! Please, reload page`}</Informer>
+        >{`No items found!`}</Informer>
       )}
       {showLoader && <Loader />}
       {showLoadMore && <BtnLoadMore handleLoadMore={handleLoadMore} />}
@@ -66,6 +67,6 @@ export const TrendingMovies = () => {
           $infotype={INFO_TYPES.error}
         >{`Oops, something went wrong! ${error.message}`}</Informer>
       )}
-    </section>
+    </Section>
   );
 };

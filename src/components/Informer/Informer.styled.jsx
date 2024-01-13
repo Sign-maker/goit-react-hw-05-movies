@@ -3,6 +3,8 @@ import { INFO_TYPES } from 'configs/constants';
 
 export const Informer = styled.p`
   text-align: center;
+  padding-top: ${props => props.theme.spacing(2)};
+  padding-bottom: ${props => props.theme.spacing(2)};
   color: ${props => {
     let color = '';
 
@@ -11,7 +13,7 @@ export const Informer = styled.p`
         color = 'red';
         break;
       case INFO_TYPES.notification:
-        color = '#3f51b5';
+        color = props.theme.accentColor;
         break;
       default:
         color = 'black';

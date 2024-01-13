@@ -1,29 +1,22 @@
-import { Loader } from 'components/Loader/Loader';
 import React, { Suspense } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
-import styled from 'styled-components';
-const StyledLink = styled(NavLink)`
-  &.active {
-    color: red;
-  }
-`;
+import { Outlet } from 'react-router-dom';
+import { Loader } from 'components/Loader/Loader';
+import { Container, Header, Nav, StyledLink } from './Layout.styled';
 
-const Layout = () => {
-  return (
-    <div>
-      <header>
-        <nav>
-          <StyledLink to="/">Home</StyledLink>
-          <StyledLink to="/movies">Movies</StyledLink>
-        </nav>
-      </header>
-      <main>
-        <Suspense fallback={<Loader />}>
-          <Outlet />
-        </Suspense>
-      </main>
-    </div>
-  );
-};
+const Layout = () => (
+  <Container>
+    <Header>
+      <Nav>
+        <StyledLink to="/">Home</StyledLink>
+        <StyledLink to="/movies">Movies</StyledLink>
+      </Nav>
+    </Header>
+    <main>
+      <Suspense fallback={<Loader />}>
+        <Outlet />
+      </Suspense>
+    </main>
+  </Container>
+);
 
 export default Layout;

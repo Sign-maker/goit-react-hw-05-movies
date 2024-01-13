@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { CastList } from 'components/CastList/CastList';
-import { Informer } from 'components/Informer/Informer.styled';
-import { Loader } from 'components/Loader/Loader';
-import { INFO_TYPES, STATUS } from 'configs/constants';
 import { getMovieCredits } from 'services-api/themoviedb-apt';
+import { INFO_TYPES, STATUS } from 'configs/constants';
+import { CastList } from 'components/CastList/CastList';
+import { Loader } from 'components/Loader/Loader';
+import { Informer } from 'components/Informer/Informer.styled';
 
 const Cast = () => {
   const [items, setItems] = useState([]);
@@ -48,7 +48,7 @@ const Cast = () => {
       {showNoItemsWarning && (
         <Informer
           $infotype={INFO_TYPES.notification}
-        >{`No items found!`}</Informer>
+        >{`No casts found!`}</Informer>
       )}
       {showLoader && <Loader />}
       {showError && (

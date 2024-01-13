@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { BtnLoadMore } from 'components/BtnLoadMore/BtnLoadMore';
-import { Informer } from 'components/Informer/Informer.styled';
-import { Loader } from 'components/Loader/Loader';
-import { ReviewList } from 'components/ReviewList/ReviewList';
 import { INFO_TYPES, STATUS } from 'configs/constants';
 import { getMovieReviews } from 'services-api/themoviedb-apt';
+import { BtnLoadMore } from 'components/BtnLoadMore/BtnLoadMore';
+import { Loader } from 'components/Loader/Loader';
+import { ReviewList } from 'components/ReviewList/ReviewList';
+import { Informer } from 'components/Informer/Informer.styled';
 
 const Reviews = () => {
   const [items, setItems] = useState([]);
@@ -63,7 +63,7 @@ const Reviews = () => {
       {showNoItemsWarning && (
         <Informer
           $infotype={INFO_TYPES.notification}
-        >{`No items found!`}</Informer>
+        >{`No reviews found!`}</Informer>
       )}
       {showLoader && <Loader />}
       {showLoadMore && <BtnLoadMore handleLoadMore={handleLoadMore} />}
